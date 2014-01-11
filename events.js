@@ -4,6 +4,11 @@ var each = require('iterate').each
 var u = require('./util')
 var EventEmitter = require('events').EventEmitter
 
+// 通过 Scuttlebutt, ReliableEventEmitter 实现了可靠的事件传递
+// 即使由于网络终端，造成一部分事件没有收到，
+// ReliableEventEmitter 也可以确保重连后同步之前的事件。
+// 这个例子并没有考虑时间积累过多的问题
+
 module.exports = ReliableEventEmitter
 
 inherits(ReliableEventEmitter, Scuttlebutt)

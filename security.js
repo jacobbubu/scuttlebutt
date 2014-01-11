@@ -4,13 +4,13 @@ var crypto = require('crypto')
 //security is pluggable - or can be left out.
 //
 //there is a sign method, and a verify method (which may be async)
-//hmm, after thinking through some possible attacks, 
+//hmm, after thinking through some possible attacks,
 //https://github.com/dominictarr/scuttlebutt/issues/6
 //I've realized that it is necessary to let the security plugin set
 //the ID. hmm, that means there will need to be an async initialization step...
 //
-//The security will either need to shell out to `ssh-keygen` or to read a key pair 
-//from the file system. hmm, There should only be a single instance of security per 
+//The security will either need to shell out to `ssh-keygen` or to read a key pair
+//from the file system. hmm, There should only be a single instance of security per
 //process (except when testing), so maybe init security, then pass it to a new scuttlebutt)
 //there may be many scuttlebutt instances but they should use the same key pair.
 //
@@ -28,7 +28,7 @@ var algorithm = 'RSA-SHA1'
 var format = 'base64'
 var hashAlg = 'SHA1'
 
-module.exports = function (keys, 
+module.exports = function (keys,
   //THIS IS SERIOUS BUSINESS!
   PRIVATE, PUBLIC
   //THEREFORE THE CAPS MUST BE LOCKED

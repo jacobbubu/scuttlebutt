@@ -1,13 +1,17 @@
 # scuttlebutt
 
+做这个 Fork 目的是为了能让我自己在上面写写画画，便于理解源代码。
+
+可以先阅读 [READFIRST_CHS.md](./READFIRST_CHS.md) 了解算法的基本原理。
+
 A base-class for real-time replication.
 
 [![travis](https://secure.travis-ci.org/dominictarr/scuttlebutt.png?branch=master)](https://travis-ci.org/dominictarr/scuttlebutt)
 
 [![browser support](http://ci.testling.com/dominictarr/scuttlebutt.png)](http://ci.testling.com/dominictarr/scuttlebutt)
 
-This seems like a silly name, but I assure you, this is real science. 
-Read this: http://www.cs.cornell.edu/home/rvr/papers/flowgossip.pdf 
+This seems like a silly name, but I assure you, this is real science.
+Read this: http://www.cs.cornell.edu/home/rvr/papers/flowgossip.pdf
 
 Or, if you're lazy: http://en.wikipedia.org/wiki/Scuttlebutt (laziness will get you nowhere, btw)
 
@@ -46,7 +50,7 @@ net.createServer(function (stream) {
 }).listen(8000, function () {
 
   var stream = net.connect(8000)
-  stream.pipe(z.createStream()).pipe(stream)  
+  stream.pipe(z.createStream()).pipe(stream)
 
 })
 ```
@@ -138,7 +142,7 @@ before writing to disk.
 crashes before the history has been written some data will be lost
 /*this is where link to module for that will go*/)
 
-You may use [kv](https://github.com/dominictarr/kv) to get streams 
+You may use [kv](https://github.com/dominictarr/kv) to get streams
 to local storage.
 
 ## read only mode.
@@ -152,7 +156,7 @@ var s2 = slave.createStream({readable: false, sendClock: true})
 ```
 
 `master` will emit updates, but not accept them, over this stream.
-This checking is per stream - so it's possible to attach `master` to 
+This checking is per stream - so it's possible to attach `master` to
 another master node and have master nodes replicate each way.
 
 ## Implementing Custom Scuttlebutts
@@ -161,7 +165,7 @@ The user must inherit from `Scuttlebutt` and provide an implementation of `histo
 
 ### Scuttlebutt#history(sources)
 
-`sources` is a hash of source_ids: timestamps. 
+`sources` is a hash of source_ids: timestamps.
 History must return an array of all known events from all sources
 That occur after the given timestamps for each source.
 
@@ -241,7 +245,7 @@ Set a property.
 
 #### on('update', function ([key, value], source, updateId))
 
-Emmitted when a property changes. 
+Emmitted when a property changes.
 If `source !== this.id`
 then it was a remote update.
 
@@ -254,19 +258,19 @@ Messages are sent in this format:
 ```
 
 `source` is the id of the node which originated this message.
-Timestamp is the time when the message was created. 
+Timestamp is the time when the message was created.
 This message is created using `Scuttlebutt#localUpdate(key, value)`.
 
 When two `Scuttlebutts` are piped together, they both exchange their current list
 of sources. This is an object of `{source_id: latest_timestamp_for_source_id}`
-After receiving this message, `Scuttlebutt` sends any messages not yet 
+After receiving this message, `Scuttlebutt` sends any messages not yet
 known by the other end. This is the heart of Scuttlebutt Reconciliation.
 
 ## Security
 
-Scuttlebutt has an (optional) heavy duty security model using public keys. 
+Scuttlebutt has an (optional) heavy duty security model using public keys.
 This enables a high level of security even in peer-to-peer applications.
-You can be sure that a given message is from the node that sent it, 
+You can be sure that a given message is from the node that sent it,
 even if you did not receive the messasge from them directly.
 
 ## Enabling Security
@@ -287,7 +291,7 @@ authenticity of the message by verifying it against the source's public key.
 This is possible even if the verifying node received the message from an intermediate node.
 
 Security is activated by passing in a security object to the contructor of a scuttlebutt
-subclass. 
+subclass.
 
 Use the included implementation:
 
@@ -298,7 +302,7 @@ var Model = require('scuttlebutt/model')
 var m = new Model(security)
 ```
 
-See 
+See
 [scuttlebutt/security.js](https://github.com/dominictarr/scuttlebutt/blob/master/security.js)
 for a simple example implementation.
 
@@ -306,16 +310,16 @@ for a simple example implementation.
 `verify(update, cb)` should verify the update, using public key associated with the
 `source` field in the update. Verification may be asyncronous. `verify` must callback
 `cb(err, boolean)` where boolean indicates whether or not the signature is valid.
-Only callback in error in the most extreme circumstances. 
-If there was no known key for the required source then that should be treated as a 
+Only callback in error in the most extreme circumstances.
+If there was no known key for the required source then that should be treated as a
 verification failure. If it is not possible to reach the key database (or whatever)
-then the request should be retried until it is available. 
+then the request should be retried until it is available.
 
-> Note: although the API supports asyncronous verification, 
+> Note: although the API supports asyncronous verification,
 > it's probably a good idea to load keys into memory so that messages can be verified
 > and signed syncronously.
 
-`createId()` returns a new id for the current node. This is used in the example security 
+`createId()` returns a new id for the current node. This is used in the example security
 implementation to return a id that is a hash of the public key. This makes it impossible
 for rogue nodes to attempt to associate a old node id with a new public key.
 
