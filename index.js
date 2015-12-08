@@ -83,29 +83,19 @@ sb.localUpdate = function (trx) {
 // update记录的格式为: [value, ts, sourceId]
 sb._update = function (update) {
   //validated when it comes into the stream
-<<<<<<< HEAD
   var ts = update[1]        // 数组第二个参数是时间戳
   var source = update[2]    // Source Id
-
-  //if this message is old for it's source,
-  //ignore it. it's out of order.
-  //each node must emit it's changes in order!
-
-  // ts 仅在一个 source 内才有意义（不同的 source 的时钟未必一致）
-  // 如果发现传入的 [ts, sourceId] 比保存的 [ts, sourceId] 新，才会产生后续的更新
-  // 否则触发事件后丢弃
-  // 子类可以确定的是，只会收到某个 source 的最新的 update
-  // 父类发出的 old_data 事件可以帮助我们跟踪有多少无效的更新被传递
-=======
-  var ts = update[1]
-  var source = update[2]
 
   //if this message is old for it's source, ignore it. it's out of
   //order. each node must emit it's changes in order!
   //emit an 'old_data' event because i'll want to track how many
   //unnecessary messages are sent.
 
->>>>>>> dominictarr/master
+  // ts 仅在一个 source 内才有意义（不同的 source 的时钟未必一致）
+  // 如果发现传入的 [ts, sourceId] 比保存的 [ts, sourceId] 新，才会产生后续的更新
+  // 否则触发事件后丢弃
+  // 子类可以确定的是，只会收到某个 source 的最新的 update
+  // 父类发出的 old_data 事件可以帮助我们跟踪有多少无效的更新被传递
   var latest = this.sources[source]
   if(latest && latest >= ts)
     return emit.call(this, 'old_data', update), false
@@ -131,7 +121,6 @@ sb._update = function (update) {
     if(!verified)
       return emit.call(self, 'unverified_data', update)
 
-<<<<<<< HEAD
     // check if this message is older than
     // the value we already have.
     // do nothing if so
@@ -141,8 +130,6 @@ sb._update = function (update) {
     // 把 update 送给子类
     // 父类并不关心子类是如何根据 update 来合并其内部状态的
     // 每一个相连的 Stream 都会监听 _update 事件，一旦收到该事件，则会触发发送同步消息到对端
-=======
->>>>>>> dominictarr/master
     if(self.applyUpdate(update))
       emit.call(self, '_update', update) //write to stream.
   }
