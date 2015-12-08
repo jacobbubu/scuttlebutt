@@ -15,6 +15,11 @@ Read this: http://www.cs.cornell.edu/home/rvr/papers/flowgossip.pdf
 
 Or, if you're lazy: http://en.wikipedia.org/wiki/Scuttlebutt (laziness will get you nowhere, btw)
 
+## secure-scuttlebutt
+
+Creating this module eventually lead me to [secure-scuttlebutt](https://github.com/dominictarr/secure-scuttlebutt)
+it is based on a similar replication protocol as scuttlebutt, but puts security at the forefront.
+
 ## Subclasses
 
 Scuttlebutt is intended to be subclassed into a variety of data-models.
@@ -31,10 +36,14 @@ subclasses:
   * [scuttlebucket](https://github.com/dominictarr/scuttlebucket) combine multiple scuttlebutts into one.
   * [expiry-model](https://github.com/Raynos/expiry-model) memory capped model with expiring keys.
   * [r-value](https://github.com/dominictarr/r-value) replicate a single value.
+  * [gossip-object](https://github.com/vigour-io/gossip-object) like scuttlebutt/model, but supports nested objects.
+  * [scuttleboat](https://github.com/kumavis/scuttleboat) a dynamic scuttlebucket!
+  * [r-string](https://github.com/marcelklehr/r-string) character-wise collaborative text editing.
 
 ### Replication
 
 Any Scuttlebutt subclass is replicated with createStream.
+Create a server and then connect a client to it:
 
 ``` js
 var Model = require('scuttlebutt/model')
@@ -49,6 +58,7 @@ net.createServer(function (stream) {
 
 }).listen(8000, function () {
 
+  //then connect the client!
   var stream = net.connect(8000)
   stream.pipe(z.createStream()).pipe(stream)
 
@@ -207,7 +217,7 @@ s.pipe(b.createStream()).pipe(s)
 
 A reliable event emmitter. Multiple instances of an emitter
 may be connected to each other and will remember events,
-so that they may be resent after a disconnection or crash.
+so that they may be present after a disconnection or crash.
 
 With this approach it is also possible to persist events to disk,
 making them durable over crashes.
