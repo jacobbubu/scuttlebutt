@@ -71,7 +71,13 @@ m.applyUpdate = function (update) {
     && this.store[key][1] > update[1])
     return this.emit('_remove', update)
 
-  // 传入的 update 更新一些，因此覆盖老值。覆盖前发出通知事件
+  // 传入的 update 更新一些（this.store[key][1] <= update[1]），因此覆盖老值。
+  // 覆盖前发出通知事件
+  // *** 这里有一个问题：虽然 scuttlebutt 类自身仅仅把某个 source 最新的 update 传递给
+  // applyUpdate，但是在 Model 的 applyUpdate 比较时间戳的时候却没有区分 source，而是
+  // 全部 source 一起比较的（这样仅仅保存了最后一条update，无论 source）。
+  // 作者在这里是简化处理了，一个完整的实现应该是 Model 针对每个 key 都保存来自每个 source 的最后的时间戳
+  // 只要收到的时间戳在这个 soource 最新，那么这条就是该key的最后结果
   if(this.store[key]) this.emit('_remove', this.store[key])
 
   this.store[key] = update
